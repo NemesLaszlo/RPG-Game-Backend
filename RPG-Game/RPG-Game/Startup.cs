@@ -2,11 +2,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using RPG_Game.Contracts;
+using RPG_Game.Data;
+using RPG_Game.Mapping;
+using RPG_Game.Services.CharacterService;
+using RPG_Game.Services.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +32,12 @@ namespace RPG_Game
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddAutoMapper(typeof(Maps));
+            services.AddSingleton<ILoggerService, LoggerService>();
+            services.AddScoped<ICharacterService, CharacterService>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
