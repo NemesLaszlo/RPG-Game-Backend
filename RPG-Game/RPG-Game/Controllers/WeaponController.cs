@@ -42,7 +42,7 @@ namespace RPG_Game.Controllers
         /// <returns>With the character with recentry the added weapon</returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> AddWeapon(AddWeaponDto newWeapon)
+        public async Task<IActionResult> AddWeapon([FromBody] AddWeaponDto newWeapon)
         {
             string location = GetControllerActionNames();
             _logger.LogInfo($"{location}: Character with id: {newWeapon.CharacterId} got a {newWeapon.Name} weapon.");
@@ -56,7 +56,7 @@ namespace RPG_Game.Controllers
         /// <returns>With the character with recentry the added (chenge to new) weapon</returns>
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> ChangeWeapon(AddWeaponDto newWeapon)
+        public async Task<IActionResult> ChangeWeapon([FromBody] AddWeaponDto newWeapon)
         {
             string location = GetControllerActionNames();
             _logger.LogInfo($"{location}: Character with id: {newWeapon.CharacterId} switch to a {newWeapon.Name} weapon.");

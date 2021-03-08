@@ -11,5 +11,6 @@ namespace RPG_Game.Contracts
     public interface ICharacterSkillService
     {
         Task<ServiceResponse<GetCharacterDto>> AddCharacterSkill(AddCharacterSkillDto newCharacterSkill);
+        Task<ServiceResponse<GetCharacterDto>> DeleteCharacterSkill(DeleteCharacterSkillDto deleteCharacterSkill);
     }
 }

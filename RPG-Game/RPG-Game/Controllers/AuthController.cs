@@ -43,7 +43,7 @@ namespace RPG_Game.Controllers
         [Route("Register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Register(UserRegisterDto request)
+        public async Task<IActionResult> Register([FromBody] UserRegisterDto request)
         {
             string location = GetControllerActionNames();
             ServiceResponse<int> response = await _authService.Register(
@@ -66,7 +66,7 @@ namespace RPG_Game.Controllers
         [Route("Login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Login(UserLoginDto request)
+        public async Task<IActionResult> Login([FromBody] UserLoginDto request)
         {
             string location = GetControllerActionNames();
             ServiceResponse<string> response = await _authService.Login(

@@ -14,7 +14,8 @@ namespace RPG_Game.Mapping
     {
         public Maps()
         {
-            CreateMap<Character, GetCharacterDto>();
+            CreateMap<Character, GetCharacterDto>()
+                .ForMember(dto => dto.Skills, c => c.MapFrom(c => c.CharacterSkills.Select(cs => cs.Skill))); // Many-To-Many Dto mapping
             CreateMap<CreateCharacterDto, Character>();
             CreateMap<UpdateCharacterDto, Character>();
             CreateMap<Weapon, GetWeaponDto>();
