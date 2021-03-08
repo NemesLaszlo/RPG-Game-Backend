@@ -20,5 +20,7 @@ namespace RPG_Game.Models
         [Required]
         public RpgClass Class { get; set; }
         public User User { get; set; }
+        public int UserId { get; set; }
+        public Weapon Weapon { get; set; }
     }
 }

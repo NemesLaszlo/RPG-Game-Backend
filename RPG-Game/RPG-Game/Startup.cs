@@ -17,6 +17,7 @@ using RPG_Game.Mapping;
 using RPG_Game.Services.Authentication;
 using RPG_Game.Services.CharacterService;
 using RPG_Game.Services.Logger;
+using RPG_Game.Services.WeaponService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,9 +58,11 @@ namespace RPG_Game
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ILoggerService, LoggerService>();
-            services.AddScoped<ICharacterService, CharacterService>();
             services.AddScoped<IAuthService, AuthService>();
 
+            services.AddScoped<ICharacterService, CharacterService>();
+            services.AddScoped<IWeaponService, WeaponService>();
+            
             services.AddControllers();
 
             services.AddSwaggerGen(c =>

@@ -15,5 +15,7 @@ namespace RPG_Game.Models
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public List<Character> Characters {get; set;}
+        [Required]
+        public string Role { get; set; }
     }
 }

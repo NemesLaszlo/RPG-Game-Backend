@@ -1,4 +1,5 @@
-﻿using RPG_Game.Models;
+﻿using RPG_Game.Dtos.Weapon;
+using RPG_Game.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,6 @@ namespace RPG_Game.Dtos.Character
         public int Defense { get; set; }
         public int Intelligence { get; set; }
         public RpgClass Class { get; set; }
+        public GetWeaponDto Weapon { get; set; }
     }
 }
