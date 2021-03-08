@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using RPG_Game.Contracts;
 using RPG_Game.Data;
 using RPG_Game.Mapping;
+using RPG_Game.Services.Authentication;
 using RPG_Game.Services.CharacterService;
 using RPG_Game.Services.Logger;
 using System;
@@ -38,6 +39,7 @@ namespace RPG_Game
             services.AddAutoMapper(typeof(Maps));
             services.AddSingleton<ILoggerService, LoggerService>();
             services.AddScoped<ICharacterService, CharacterService>();
+            services.AddScoped<IAuthService, AuthService>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
