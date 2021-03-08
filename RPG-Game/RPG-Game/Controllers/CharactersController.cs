@@ -134,7 +134,7 @@ namespace RPG_Game.Controllers
             try
             {
                 _logger.LogInfo($"{location}: Character with id: {id} Update Attempted");
-                if (id < 1 || updatedCharacter == null || id != updatedCharacter.Id || !Enum.IsDefined(typeof(RpgClass), updatedCharacter.Class))
+                if (id < 1 || updatedCharacter == null || !Enum.IsDefined(typeof(RpgClass), updatedCharacter.Class))
                 {
                     _logger.LogWarn($"{location}: Character Update failed with bad data");
                     return BadRequest();
@@ -145,7 +145,7 @@ namespace RPG_Game.Controllers
                     _logger.LogWarn($"{location}: Character with id: {id} was not found");
                     return NotFound();
                 }
-                bool isSuccess = await _characterService.UpdateCharacter(updatedCharacter);
+                bool isSuccess = await _characterService.UpdateCharacter(id, updatedCharacter);
                 if (!isSuccess)
                 {
                     return InternalError($"{location}: Update operation failed.");

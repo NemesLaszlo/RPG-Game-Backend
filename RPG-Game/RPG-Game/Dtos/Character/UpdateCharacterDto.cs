@@ -9,7 +9,6 @@ namespace RPG_Game.Dtos.Character
 {
     public class UpdateCharacterDto
     {
-        public int Id { get; set; }
         [Required]
         public string Name { get; set; }
         public int HitPoints { get; set; }

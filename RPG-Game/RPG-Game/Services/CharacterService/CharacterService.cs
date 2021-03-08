@@ -55,11 +55,18 @@ namespace RPG_Game.Services.CharacterService
             return await Save();
         }
 
-        public async Task<bool> UpdateCharacter(UpdateCharacterDto updatedCharacter)
+        public async Task<bool> UpdateCharacter(int id, UpdateCharacterDto updatedCharacter)
         {
-            Character character = await _context.Characters.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == updatedCharacter.Id);
+            Character character = await _context.Characters.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
             if (character.User.Id == GetUserId())
             {
+                character.Name = updatedCharacter.Name;
+                character.Class = updatedCharacter.Class;
+                character.Defense = updatedCharacter.Defense;
+                character.HitPoints = updatedCharacter.HitPoints;
+                character.Intelligence = updatedCharacter.Intelligence;
+                character.Strength = updatedCharacter.Strength;
+
                 _context.Characters.Update(character);
             }
             return await Save();
@@ -68,6 +75,10 @@ namespace RPG_Game.Services.CharacterService
         public async Task<bool> DeleteCharacter(int id)
         {
             Character character = await _context.Characters.FirstOrDefaultAsync(c => c.Id == id && c.User.Id == GetUserId());
+            if(character == null)
+            {
+                return false;
+            }
             _context.Characters.Remove(character);
             return await Save();
         }

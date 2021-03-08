@@ -12,7 +12,7 @@ namespace RPG_Game.Contracts
         Task<ServiceResponse<List<GetCharacterDto>>> GetAllCharacters();
         Task<ServiceResponse<GetCharacterDto>> GetCharacterById(int id);
         Task<bool> CreateCharacter(CreateCharacterDto newCharacter);
-        Task<bool> UpdateCharacter(UpdateCharacterDto updatedCharacter);
+        Task<bool> UpdateCharacter(int id, UpdateCharacterDto updatedCharacter);
         Task<bool> DeleteCharacter(int id);
         Task<bool> Save();
         Task<bool> IsExists(int id);
