@@ -12,5 +12,6 @@ namespace RPG_Game.Contracts
     {
         Task<ServiceResponse<GetCharacterDto>> AddWeapon(AddWeaponDto newWeapon);
         Task<ServiceResponse<GetCharacterDto>> ChangeWeapon(AddWeaponDto newWeapon);
+        Task<ServiceResponse<GetCharacterDto>> DeleteWeapon(DeleteWeaponDto delWeapon);
     }
 }

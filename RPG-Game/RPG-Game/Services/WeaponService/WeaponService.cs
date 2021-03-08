@@ -35,6 +35,7 @@ namespace RPG_Game.Services.WeaponService
             try
             {
                 Character character = await _context.Characters
+                    .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
                     .FirstOrDefaultAsync(c => c.Id == newWeapon.CharacterId && c.User.Id == GetUserId());
                 if (character == null)
                 {
@@ -68,6 +69,7 @@ namespace RPG_Game.Services.WeaponService
             try
             {
                 Character character = await _context.Characters
+                    .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
                     .FirstOrDefaultAsync(c => c.Id == newWeapon.CharacterId && c.User.Id == GetUserId());
                 if (character == null)
                 {
@@ -86,6 +88,42 @@ namespace RPG_Game.Services.WeaponService
                     _context.Weapons.Update(weapon);
                     await _context.SaveChangesAsync();
                 }
+                response.Data = _mapper.Map<GetCharacterDto>(character);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse<GetCharacterDto>> DeleteWeapon(DeleteWeaponDto delWeapon)
+        {
+            ServiceResponse<GetCharacterDto> response = new ServiceResponse<GetCharacterDto>();
+            try
+            {
+                Character character = await _context.Characters
+                    .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
+                    .FirstOrDefaultAsync(c => c.Id == delWeapon.CharacterId && c.User.Id == GetUserId());
+                if (character == null)
+                {
+                    response.Success = false;
+                    response.Message = "Character not found.";
+                    return response;
+                }
+
+                Weapon weapon = await _context.Weapons.FirstOrDefaultAsync(w => w.Id == delWeapon.WeaponId);
+                if (weapon == null)
+                {
+                    response.Success = false;
+                    response.Message = "Character's weapon not found.";
+                    return response;
+                }
+
+                _context.Weapons.Remove(weapon);
+                await _context.SaveChangesAsync();
+
                 response.Data = _mapper.Map<GetCharacterDto>(character);
             }
             catch (Exception ex)

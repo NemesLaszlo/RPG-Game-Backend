@@ -62,5 +62,14 @@ namespace RPG_Game.Controllers
             _logger.LogInfo($"{location}: Character with id: {newWeapon.CharacterId} switch to a {newWeapon.Name} weapon.");
             return Ok(await _weaponService.ChangeWeapon(newWeapon));
         }
+
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteCharacterSkill([FromBody] DeleteWeaponDto deleteWeapon)
+        {
+            string location = GetControllerActionNames();
+            _logger.LogInfo($"{location}: Character with id: {deleteWeapon.CharacterId} lose his/her weapon and the weapon id is {deleteWeapon.WeaponId} .");
+            return Ok(await _weaponService.DeleteWeapon(deleteWeapon));
+        }
     }
 }
