@@ -61,5 +61,39 @@ namespace RPG_Game.Services.WeaponService
             }
             return response;
         }
+
+        public async Task<ServiceResponse<GetCharacterDto>> ChangeWeapon(AddWeaponDto newWeapon)
+        {
+            ServiceResponse<GetCharacterDto> response = new ServiceResponse<GetCharacterDto>();
+            try
+            {
+                Character character = await _context.Characters
+                    .FirstOrDefaultAsync(c => c.Id == newWeapon.CharacterId && c.User.Id == GetUserId());
+                if (character == null)
+                {
+                    response.Success = false;
+                    response.Message = "Character not found.";
+                    return response;
+                }
+
+                Weapon weapon = await _context.Weapons.FirstOrDefaultAsync(w => w.CharacterId == newWeapon.CharacterId);
+                if (weapon != null)
+                {
+                    weapon.Name = newWeapon.Name;
+                    weapon.Damage = newWeapon.Damage;
+                    weapon.Character = character;
+
+                    _context.Weapons.Update(weapon);
+                    await _context.SaveChangesAsync();
+                }
+                response.Data = _mapper.Map<GetCharacterDto>(character);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
     }
 }

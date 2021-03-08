@@ -16,6 +16,7 @@ using RPG_Game.Data;
 using RPG_Game.Mapping;
 using RPG_Game.Services.Authentication;
 using RPG_Game.Services.CharacterService;
+using RPG_Game.Services.CharacterSkillService;
 using RPG_Game.Services.Logger;
 using RPG_Game.Services.WeaponService;
 using System;
@@ -62,7 +63,8 @@ namespace RPG_Game
 
             services.AddScoped<ICharacterService, CharacterService>();
             services.AddScoped<IWeaponService, WeaponService>();
-            
+            services.AddScoped<ICharacterSkillService, CharacterSkillService>();
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>

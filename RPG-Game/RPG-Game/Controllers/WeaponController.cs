@@ -48,5 +48,19 @@ namespace RPG_Game.Controllers
             _logger.LogInfo($"{location}: Character with id: {newWeapon.CharacterId} got a {newWeapon.Name} weapon.");
             return Ok(await _weaponService.AddWeapon(newWeapon));
         }
+
+        /// <summary>
+        /// Change the weapon.
+        /// </summary>
+        /// <param name="newWeapon">Add weapon Dto</param>
+        /// <returns>With the character with recentry the added (chenge to new) weapon</returns>
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ChangeWeapon(AddWeaponDto newWeapon)
+        {
+            string location = GetControllerActionNames();
+            _logger.LogInfo($"{location}: Character with id: {newWeapon.CharacterId} switch to a {newWeapon.Name} weapon.");
+            return Ok(await _weaponService.ChangeWeapon(newWeapon));
+        }
     }
 }
