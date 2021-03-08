@@ -50,10 +50,33 @@ namespace RPG_Game.Controllers
                 new User { Username = request.Username }, request.Password);
             if (!response.Success)
             {
-                _logger.LogWarn($"{location}: User with id: {response.Message} register oeration failed.");
+                _logger.LogWarn($"{location}: {response.Message} register operation failed.");
                 return BadRequest(response);
             }
-            _logger.LogWarn($"{location}: User with id: {response.Message} successfully registered.");
+            _logger.LogInfo($"{location}: User with id: {response.Data} successfully registered.");
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// User Login
+        /// </summary>
+        /// <param name="request">User Login Dto</param>
+        /// <returns>With the token</returns>
+        [HttpPost]
+        [Route("Login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Login(UserLoginDto request)
+        {
+            string location = GetControllerActionNames();
+            ServiceResponse<string> response = await _authService.Login(
+                request.Username, request.Password);
+            if (!response.Success)
+            {
+                _logger.LogWarn($"{location}: User {request.Username} - {response.Message} login operation failed.");
+                return BadRequest(response);
+            }
+            _logger.LogInfo($"{location}: User {request.Username} successfully logged in.");
             return Ok(response);
         }
     }
