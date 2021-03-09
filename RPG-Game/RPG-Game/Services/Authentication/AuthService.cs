@@ -60,7 +60,6 @@ namespace RPG_Game.Services.Authentication
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
-            user.Role = "Player";
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();

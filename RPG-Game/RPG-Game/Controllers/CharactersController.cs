@@ -15,7 +15,7 @@ namespace RPG_Game.Controllers
     /// <summary>
     /// Endpoint used to interact with the Characters in the prg-game's database.
     /// </summary>
-    [Authorize]
+    [Authorize(Roles = "Player,Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CharactersController : ControllerBase
