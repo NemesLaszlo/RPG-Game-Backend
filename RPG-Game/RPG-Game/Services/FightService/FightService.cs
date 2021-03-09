@@ -48,7 +48,7 @@ namespace RPG_Game.Services.FightService
                 if (opponent == null)
                 {
                     response.Success = false;
-                    response.Message = "Opponent not found or not found.";
+                    response.Message = "Opponent not found.";
                     return response;
                 }
 
@@ -90,9 +90,75 @@ namespace RPG_Game.Services.FightService
             return response;
         }
 
-        public Task<ServiceResponse<AttackResultDto>> SkillAttack(SkillAttackDto request)
+        public async Task<ServiceResponse<AttackResultDto>> SkillAttack(SkillAttackDto request)
         {
-            throw new NotImplementedException();
+            ServiceResponse<AttackResultDto> response = new ServiceResponse<AttackResultDto>();
+            try
+            {
+                Character attacker = await _context.Characters
+                    .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
+                    .FirstOrDefaultAsync(c => c.Id == request.AttackerId && c.User.Id == GetUserId());
+                if (attacker == null)
+                {
+                    response.Success = false;
+                    response.Message = "Attacker not found or not yours.";
+                    return response;
+                }
+
+                CharacterSkill characterSkill =
+                    attacker.CharacterSkills.FirstOrDefault(cs => cs.Skill.Id == request.SkillId);
+                if (characterSkill == null)
+                {
+                    response.Success = false;
+                    response.Message = $"{attacker.Name} doesn't know that skill.";
+                    return response;
+                }
+
+                Character opponent = await _context.Characters
+                    .FirstOrDefaultAsync(c => c.Id == request.OpponentId);
+                if (opponent == null)
+                {
+                    response.Success = false;
+                    response.Message = "Opponent not found.";
+                    return response;
+                }
+
+                if (attacker.HitPoints <= 0)
+                {
+                    response.Success = false;
+                    response.Message = $"{attacker.Name} has been defeated can't attack!";
+                    return response;
+                }
+                if (opponent.HitPoints <= 0)
+                {
+                    response.Success = false;
+                    response.Message = $"{opponent.Name} has been defeated can't fight more!";
+                    return response;
+                }
+                int damage = Utility.DoSkillAttack(attacker, opponent, characterSkill);
+                if (opponent.HitPoints <= 0)
+                {
+                    response.Message = $"{opponent.Name} has been defeated!";
+                }
+
+                _context.Characters.Update(opponent);
+                await _context.SaveChangesAsync();
+
+                response.Data = new AttackResultDto
+                {
+                    Attacker = attacker.Name,
+                    AttackerHP = attacker.HitPoints,
+                    Opponent = opponent.Name,
+                    OpponentHP = opponent.HitPoints,
+                    Damage = damage
+                };
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
         }
 
         public Task<ServiceResponse<FightResultDto>> Fight(FightRequestDto request)

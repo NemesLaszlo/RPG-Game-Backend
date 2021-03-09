@@ -48,6 +48,19 @@ namespace RPG_Game.Controllers
             return Ok(await _fightService.WeaponAttack(request));
         }
 
+        /// <summary>
+        /// Attack the opponent with skill
+        /// </summary>
+        /// <param name="request">Skill Attack Dto</param>
+        /// <returns>With the attack result</returns>
+        [HttpPost("Skill")]
+        public async Task<IActionResult> SkillAttack(SkillAttackDto request)
+        {
+            string location = GetControllerActionNames();
+            _logger.LogInfo($"{location}: Character with id: {request.AttackerId} attacked his/her opponent ( id: {request.OpponentId} ) with skill ( skill id: {request.SkillId} ).");
+            return Ok(await _fightService.SkillAttack(request));
+        }
+
 
     }
 }
