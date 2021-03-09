@@ -60,6 +60,7 @@ namespace RPG_Game.Services.Authentication
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+            user.Role = "Player";
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -97,7 +98,8 @@ namespace RPG_Game.Services.Authentication
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username)
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.Role)
             };
 
             SymmetricSecurityKey key = new SymmetricSecurityKey(
