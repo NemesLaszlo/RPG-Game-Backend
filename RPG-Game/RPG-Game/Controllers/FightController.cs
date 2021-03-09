@@ -61,6 +61,19 @@ namespace RPG_Game.Controllers
             return Ok(await _fightService.SkillAttack(request));
         }
 
+        /// <summary>
+        /// Start a fight
+        /// </summary>
+        /// <param name="request">Fight Request Dto</param>
+        /// <returns>With the fight result</returns>
+        [HttpPost]
+        public async Task<IActionResult> Fight(FightRequestDto request)
+        {
+            string location = GetControllerActionNames();
+            _logger.LogInfo($"{location}: Fight started");
+            return Ok(await _fightService.Fight(request));
+        }
+
 
     }
 }

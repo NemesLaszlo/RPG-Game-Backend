@@ -161,9 +161,80 @@ namespace RPG_Game.Services.FightService
             return response;
         }
 
-        public Task<ServiceResponse<FightResultDto>> Fight(FightRequestDto request)
+        public async Task<ServiceResponse<FightResultDto>> Fight(FightRequestDto request)
         {
-            throw new NotImplementedException();
+            ServiceResponse<FightResultDto> response = new ServiceResponse<FightResultDto>
+            {
+                Data = new FightResultDto()
+            };
+            try
+            {
+                List<Character> characters = await _context.Characters
+                    .Include(c => c.Weapon)
+                    .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
+                    .Where(c => request.CharacterIds.Contains(c.Id)).ToListAsync();
+
+                bool defeated = false;
+                while (!defeated)
+                {
+                    foreach (Character attacker in characters)
+                    {
+                        List<Character> opponents = characters.Where(c => c.Id != attacker.Id).ToList();
+                        Character opponent = opponents[new Random().Next(opponents.Count)];
+
+                        int damage = 0;
+                        string attackUsed = string.Empty;
+
+                        bool useWeapon = new Random().Next(2) == 0;
+                        if (useWeapon)
+                        {
+                            attackUsed = attacker.Weapon.Name;
+                            if (String.IsNullOrEmpty(attackUsed))
+                            {
+                                break;
+                            }
+                            damage = Utility.DoWeaponAttack(attacker, opponent);
+                        }
+                        else
+                        {
+                            if (attacker.CharacterSkills.Count == 0)
+                            {
+                                break;
+                            }
+                            int randomSkill = new Random().Next(attacker.CharacterSkills.Count);
+                            attackUsed = attacker.CharacterSkills[randomSkill].Skill.Name;
+                            damage = Utility.DoSkillAttack(attacker, opponent, attacker.CharacterSkills[randomSkill]);
+                        }
+
+                        response.Data.Log.Add($"{attacker.Name} attacks {opponent.Name} using {attackUsed} with {(damage >= 0 ? damage : 0)} damage.");
+
+                        if (opponent.HitPoints <= 0)
+                        {
+                            defeated = true;
+                            attacker.Victories++;
+                            opponent.Defeats++;
+                            response.Data.Log.Add($"{opponent.Name} has been defeated!");
+                            response.Data.Log.Add($"{attacker.Name} wins with {attacker.HitPoints} HP left!");
+                            break;
+                        }
+                    }
+                }
+
+                characters.ForEach(c =>
+                {
+                    c.Fights++;
+                    c.HitPoints = 100;
+                });
+
+                _context.Characters.UpdateRange(characters);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
         }
 
         public Task<ServiceResponse<List<HighScoreDto>>> GetHighscore()
