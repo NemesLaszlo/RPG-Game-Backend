@@ -42,6 +42,7 @@ namespace RPG_Game.Controllers
         /// <returns>With the attack result</returns>
         [HttpPost]
         [Route("Weapon")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> WeaponAttack(WeaponAttackDto request)
         {
             string location = GetControllerActionNames();
@@ -56,6 +57,7 @@ namespace RPG_Game.Controllers
         /// <returns>With the attack result</returns>
         [HttpPost]
         [Route("Skill")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> SkillAttack(SkillAttackDto request)
         {
             string location = GetControllerActionNames();
@@ -69,6 +71,7 @@ namespace RPG_Game.Controllers
         /// <param name="request">Fight Request Dto</param>
         /// <returns>With the fight result</returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Fight(FightRequestDto request)
         {
             string location = GetControllerActionNames();
@@ -83,11 +86,27 @@ namespace RPG_Game.Controllers
         /// <returns>With the fight result</returns>
         [HttpPost]
         [Route("Deathmach")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DeathMach(FightRequestDto request)
         {
             string location = GetControllerActionNames();
             _logger.LogInfo($"{location}: DeathMach started");
             return Ok(await _fightService.DeathMachFight(request));
+        }
+
+        /// <summary>
+        /// Get character fight leaderboard
+        /// </summary>
+        /// <returns>Character fight leaderboard</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("Highscore")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetHighscore()
+        {
+            string location = GetControllerActionNames();
+            _logger.LogInfo($"{location}: Character fight leaderboard response");
+            return Ok(await _fightService.GetHighscore());
         }
 
 

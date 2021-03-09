@@ -324,9 +324,19 @@ namespace RPG_Game.Services.FightService
             return response;
         }
 
-        public Task<ServiceResponse<List<HighScoreDto>>> GetHighscore()
+        public async Task<ServiceResponse<List<HighScoreDto>>> GetHighscore()
         {
-            throw new NotImplementedException();
+            List<Character> characters = await _context.Characters
+                .Where(c => c.Fights > 0)
+                .OrderByDescending(c => c.Victories)
+                .ThenBy(c => c.Defeats)
+                .ToListAsync();
+
+            ServiceResponse<List<HighScoreDto>> response = new ServiceResponse<List<HighScoreDto>>
+            {
+                Data = characters.Select(c => _mapper.Map<HighScoreDto>(c)).ToList()
+            };
+            return response;
         }
 
     }
