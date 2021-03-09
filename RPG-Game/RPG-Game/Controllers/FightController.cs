@@ -40,7 +40,8 @@ namespace RPG_Game.Controllers
         /// </summary>
         /// <param name="request">Weapon Attack Dto</param>
         /// <returns>With the attack result</returns>
-        [HttpPost("Weapon")]
+        [HttpPost]
+        [Route("Weapon")]
         public async Task<IActionResult> WeaponAttack(WeaponAttackDto request)
         {
             string location = GetControllerActionNames();
@@ -53,7 +54,8 @@ namespace RPG_Game.Controllers
         /// </summary>
         /// <param name="request">Skill Attack Dto</param>
         /// <returns>With the attack result</returns>
-        [HttpPost("Skill")]
+        [HttpPost]
+        [Route("Skill")]
         public async Task<IActionResult> SkillAttack(SkillAttackDto request)
         {
             string location = GetControllerActionNames();
@@ -62,7 +64,7 @@ namespace RPG_Game.Controllers
         }
 
         /// <summary>
-        /// Start a fight
+        /// Start a fight, end with the first death
         /// </summary>
         /// <param name="request">Fight Request Dto</param>
         /// <returns>With the fight result</returns>
@@ -72,6 +74,20 @@ namespace RPG_Game.Controllers
             string location = GetControllerActionNames();
             _logger.LogInfo($"{location}: Fight started");
             return Ok(await _fightService.Fight(request));
+        }
+
+        /// <summary>
+        /// Start a deathmach
+        /// </summary>
+        /// <param name="request">Fight Request Dto</param>
+        /// <returns>With the fight result</returns>
+        [HttpPost]
+        [Route("Deathmach")]
+        public async Task<IActionResult> DeathMach(FightRequestDto request)
+        {
+            string location = GetControllerActionNames();
+            _logger.LogInfo($"{location}: DeathMach started");
+            return Ok(await _fightService.DeathMachFight(request));
         }
 
 

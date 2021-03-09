@@ -237,6 +237,93 @@ namespace RPG_Game.Services.FightService
             return response;
         }
 
+        public async Task<ServiceResponse<FightResultDto>> DeathMachFight(FightRequestDto request)
+        {
+            ServiceResponse<FightResultDto> response = new ServiceResponse<FightResultDto>
+            {
+                Data = new FightResultDto()
+            };
+            try
+            {
+                List<Character> characters = await _context.Characters
+                    .Include(c => c.Weapon)
+                    .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
+                    .Where(c => request.CharacterIds.Contains(c.Id)).ToListAsync();
+
+                Dictionary<Character, string> FightingCharacters = new Dictionary<Character, string>();
+                characters.ForEach(c =>
+                {
+                    FightingCharacters[c] = "Alive";
+                });
+
+                while (FightingCharacters.Count(c => c.Value.Equals("Alive")) != 1)
+                {
+                    foreach (KeyValuePair<Character, string> attacker in FightingCharacters)
+                    {
+                        List<Character> opponents = FightingCharacters.Where(c => c.Key.Id != attacker.Key.Id && c.Value.Equals("Alive")).Select(c => c.Key).ToList();
+                        Character opponent = opponents[new Random().Next(opponents.Count)];
+
+                        int damage = 0;
+                        string attackUsed = string.Empty;
+
+                        bool useWeapon = new Random().Next(2) == 0;
+                        if (useWeapon)
+                        {
+                            attackUsed = attacker.Key.Weapon.Name;
+                            if (String.IsNullOrEmpty(attackUsed))
+                            {
+                                break;
+                            }
+                            damage = Utility.DoWeaponAttack(attacker.Key, opponent);
+                        }
+                        else
+                        {
+                            if (attacker.Key.CharacterSkills.Count == 0)
+                            {
+                                break;
+                            }
+                            int randomSkill = new Random().Next(attacker.Key.CharacterSkills.Count);
+                            attackUsed = attacker.Key.CharacterSkills[randomSkill].Skill.Name;
+                            damage = Utility.DoSkillAttack(attacker.Key, opponent, attacker.Key.CharacterSkills[randomSkill]);
+                        }
+
+                        response.Data.Log.Add($"{attacker.Key.Name} attacks {opponent.Name} using {attackUsed} with {(damage >= 0 ? damage : 0)} damage.");
+
+                        if (opponent.HitPoints <= 0)
+                        {
+                            FightingCharacters[opponent] = "Dead";
+                            opponent.Defeats++;
+                            response.Data.Log.Add($"{opponent.Name} has been defeated by {attacker.Key.Name}!");
+                            break;
+                        }
+                    }
+                }
+                Character winner = FightingCharacters.FirstOrDefault(c => c.Value.Equals("Alive")).Key;
+                response.Data.Log.Add($"{winner.Name} wins with {winner.HitPoints} HP left!");
+
+                foreach (KeyValuePair<Character, string> character in FightingCharacters)
+                {
+                    if (character.Value.Equals("Alive"))
+                    {
+                        character.Key.Victories++;
+                    }
+                    character.Key.Fights++;
+                    character.Key.HitPoints = 100;
+                }
+                List<Character> final = FightingCharacters.Keys.ToList();
+                FightingCharacters.Clear();
+
+                _context.Characters.UpdateRange(final);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
         public Task<ServiceResponse<List<HighScoreDto>>> GetHighscore()
         {
             throw new NotImplementedException();
