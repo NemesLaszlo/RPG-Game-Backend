@@ -1,5 +1,7 @@
 # RPG-Game-Backend
 
+[![CodeFactor](https://www.codefactor.io/repository/github/nemeslaszlo/rpg-game-backend/badge)](https://www.codefactor.io/repository/github/nemeslaszlo/rpg-game-backend)
+
 Simple RPG (role-playing game) game backend, which has a very similar concept like Shakes and Fidget, in text based role-playing game style.
 
 - .NET 5
